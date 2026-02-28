@@ -26,24 +26,21 @@
         .status-dot { color: #2ecc71; font-weight: bold; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; margin: 10px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .jspsych-btn { border-radius: 20px !important; padding: 10px 25px !important; background-color: #007aff !important; color: white !important; text-decoration: none; border: none; cursor: pointer; font-size: 16px; }
     </style>
 </head>
 <body>
     <script>
-        // --- CONFIGURATION EXCLUSION ---
+        // --- CONFIGURATION ---
         const totalPassesMax = 40; 
-        const googleDocUrl = "TON_LIEN_GOOGLE_DOC_ICI"; 
-        // -------------------------------
 
         const jsPsych = initJsPsych({
             on_finish: function() {
                 document.body.innerHTML = `
-                    <div style="text-align:center; padding:50px; background:white; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); font-family:sans-serif;">
-                        <h2>Partie terminée</h2>
-                        <p>Merci pour votre participation.</p>
-                        <br><br>
-                        <a href="${googleDocUrl}" class="jspsych-btn">Retourner au questionnaire</a>
+                    <div style="text-align:center; padding:50px; background:white; border-radius:20px; box-shadow:0 5px 15px rgba(0,0,0,0.1); font-family:sans-serif; max-width: 600px;">
+                        <h2 style="color: #2ecc71;">Partie terminée</h2>
+                        <p style="font-size: 18px;">Merci de votre participation !</p>
+                        <p style="color: #555; line-height: 1.6;">Le jeu est maintenant fini. <strong>Veuillez retourner sur l'onglet de votre questionnaire</strong> pour poursuivre l'étude.</p>
+                        <p style="font-size: 14px; color: #888;">(Vous pouvez fermer cette fenêtre)</p>
                     </div>`;
             }
         });
@@ -84,12 +81,14 @@
 
         const game_trial = {
             type: jsPsychHtmlButtonResponse,
-            stimulus: `<div class="game-canvas">
+            stimulus: `
+                <div class="game-canvas">
                     <div id="pos-julie" class="player"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Julie"><br>Julie</div>
                     <div id="pos-marc" class="player"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Marc"><br>Marc</div>
                     <div id="pos-vous" class="player"><img src="https://api.dicebear.com/7.x/avataaars/svg?seed=User"><br>Vous</div>
                     <div id="ball-sprite"></div>
-                </div><div class="ui-box"><p id="instruction"></p></div>`,
+                </div>
+                <div class="ui-box"><p id="instruction"></p></div>`,
             choices: [],
             on_load: function() {
                 const ball = document.getElementById('ball-sprite');
@@ -127,12 +126,9 @@
 
                         setTimeout(() => {
                             let next;
-                            // NOUVELLE LOGIQUE DE BASCULE À LA 15ème PASSE
                             if (passesCompteur <= 15) {
-                                // Phase 1 : Inclusion (33%)
                                 next = Math.random() < 0.33 ? 'vous' : (target === 'julie' ? 'marc' : 'julie');
                             } else {
-                                // Phase 2 : Exclusion (5%)
                                 next = Math.random() < 0.05 ? 'vous' : (target === 'julie' ? 'marc' : 'julie');
                             }
                             move(next);
